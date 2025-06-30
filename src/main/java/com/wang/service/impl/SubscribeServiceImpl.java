@@ -3,6 +3,10 @@ package com.wang.service.impl;
 import com.wang.enums.WxMessageType;
 import com.wang.service.SubscribeService;
 import com.wang.strategy.WxEventContext;
+import jakarta.annotation.Resource;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -10,10 +14,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;

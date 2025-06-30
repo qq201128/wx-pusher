@@ -1,6 +1,6 @@
 package com.wang.test;
 
-import com.wang.dto.IdentityInfo;
+import com.wang.domain.IdentityInfo;
 import com.wang.observer.Subscriber;
 import com.wang.observer.WxPublisher;
 import com.wang.observer.WxSubscriber;
@@ -35,7 +35,7 @@ public class CommonTest {
         after.setOpenId("1");
         after.setLatitude("1");
         after.setLongitude("1");
-        after.setPrecision("1");
+        after.setPrecisionInfo("1");
         WxSubscriber wxSubscriber1 = new WxSubscriber(after);
         // 更新地址信息
         wxPublisher.update(wxSubscriber1);
@@ -57,7 +57,7 @@ public class CommonTest {
         e2.setOpenId("1");
         e2.setLatitude("1");
         e2.setLongitude("1");
-        e2.setPrecision("1");
+        e2.setPrecisionInfo("1");
         WxSubscriber wxSubscriber1 = new WxSubscriber(e2);
         System.out.println(wxSubscriber.equals(wxSubscriber1));
     }

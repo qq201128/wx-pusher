@@ -2,17 +2,19 @@ package com.wang.strategy.event;
 
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wang.common.WxConstants;
-import com.wang.dto.IdentityInfo;
+import com.wang.domain.IdentityInfo;
 import com.wang.observer.WxPublisher;
 import com.wang.observer.WxSubscriber;
-import com.wang.repository.IdentityInfoRepository;
+import com.wang.mapper.IdentityInfoMapper;
 import com.wang.strategy.WxEventStrategy;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
+
 import java.util.Map;
 
 /**
@@ -25,7 +27,7 @@ public class LocationStrategy implements WxEventStrategy {
     private WxPublisher wxPublisher;
 
     @Resource
-    private IdentityInfoRepository identityInfoRepository;
+    private IdentityInfoMapper identityInfoMapper;
 
     @Override
     public void execute(Map<String, String> requestMap, HttpServletResponse response) throws Exception {
@@ -42,7 +44,7 @@ public class LocationStrategy implements WxEventStrategy {
         // 经度
         String longitude = requestMap.get("Longitude");
         identityInfo.setLongitude(longitude);
-        identityInfo.setPrecision(requestMap.get("Precision"));
+        identityInfo.setPrecisionInfo(requestMap.get("Precision"));
         // 根据经纬度获取地址的url
         String searchAddressUrl = "https://api.map.baidu.com/reverse_geocoding/v3/?ak=" + WxConstants.BAI_DU_AK +
                 "&output=json&coordtype=wgs84ll&location=" + latitude + "," + longitude;
@@ -68,7 +70,10 @@ public class LocationStrategy implements WxEventStrategy {
         identityInfo.setDistrict(district);
         log.info(">>> 更新用户位置信息：{}", identityInfo);
         // 更新数据库里的位置信息(走到位置策略这里一定是在表中有记录，直接更新全量的数据)
-        identityInfoRepository.save(identityInfo);
+        identityInfoMapper.update(identityInfo, Wrappers.<IdentityInfo>query().lambda()
+                .eq(IdentityInfo::getAppId, identityInfo.getAppId())
+                .eq(IdentityInfo::getAppSecret, identityInfo.getAppSecret())
+                .eq(IdentityInfo::getOpenId, identityInfo.getOpenId()));
         WxSubscriber wxSubscriber = new WxSubscriber(identityInfo);
         // 更新位置信息
         wxPublisher.update(wxSubscriber);

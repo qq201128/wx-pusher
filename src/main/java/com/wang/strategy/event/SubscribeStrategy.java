@@ -1,19 +1,20 @@
 package com.wang.strategy.event;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wang.common.WxConstants;
-import com.wang.dto.IdentityInfo;
-import com.wang.dto.IdentityInfoKey;
+import com.wang.domain.IdentityInfo;
 import com.wang.enums.WxMessageType;
 import com.wang.observer.WxPublisher;
 import com.wang.observer.WxSubscriber;
-import com.wang.repository.IdentityInfoRepository;
+import com.wang.mapper.IdentityInfoMapper;
 import com.wang.strategy.WxEventStrategy;
 import com.wang.util.WxOpUtils;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
+
 
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class SubscribeStrategy implements WxEventStrategy {
     private WxPublisher wxPublisher;
 
     @Resource
-    private IdentityInfoRepository identityInfoRepository;
+    private IdentityInfoMapper identityInfoMapper;
 
     @Override
     public void execute(Map<String, String> requestMap, HttpServletResponse response) throws Exception {
@@ -44,9 +45,13 @@ public class SubscribeStrategy implements WxEventStrategy {
         // 公众号
         String publicId = requestMap.get("ToUserName");
         WxOpUtils.returnMessages(response, WxMessageType.TEXT.getType(), openId, publicId, returnContent);
-        // 查询数据库里是否有该订阅者的信息
-        IdentityInfoKey identityInfoKey = new IdentityInfoKey(WxConstants.APP_ID, WxConstants.APP_SECRET, openId);
-        IdentityInfo infoFromDataBase = identityInfoRepository.findById(identityInfoKey).orElse(null);
+
+
+        IdentityInfo infoFromDataBase = identityInfoMapper.selectOne(Wrappers.<IdentityInfo>query().lambda()
+                .eq(IdentityInfo::getAppId, WxConstants.APP_ID)
+                .eq(IdentityInfo::getAppSecret, WxConstants.APP_SECRET)
+                .eq(IdentityInfo::getOpenId, openId));
+
         // 如果没有该订阅者信息则更新，有该订阅者信息则跳过（数据库中的信息可能包括更精确的经纬度信息）
         if (infoFromDataBase != null) {
             return;
@@ -56,6 +61,6 @@ public class SubscribeStrategy implements WxEventStrategy {
         identityInfo.setAppSecret(WxConstants.APP_SECRET);
         identityInfo.setOpenId(openId);
         identityInfo.setPublicId(publicId);
-        identityInfoRepository.save(identityInfo);
+        identityInfoMapper.insert(identityInfo);
     }
 }

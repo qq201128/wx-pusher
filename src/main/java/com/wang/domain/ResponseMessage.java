@@ -1,4 +1,4 @@
-package com.wang.dto;
+package com.wang.domain;
 
 import lombok.Data;
 

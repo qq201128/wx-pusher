@@ -1,6 +1,6 @@
 package com.wang.observer;
 
-import com.wang.dto.IdentityInfo;
+import com.wang.domain.IdentityInfo;
 import com.wang.enums.WxTemplateType;
 import com.wang.strategy.WxTemplateContext;
 import com.wang.util.SpringUtils;

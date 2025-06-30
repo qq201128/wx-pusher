@@ -1,6 +1,6 @@
 package com.wang.observer;
 
-import com.wang.dto.IdentityInfo;
+import com.wang.domain.IdentityInfo;
 import com.wang.enums.WxInformType;
 import com.wang.enums.WxTemplateType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -69,7 +69,7 @@ public class WxPublisher implements Publisher {
                 IdentityInfo oldInfo = before.getIdentityInfo();
                 oldInfo.setLatitude(newInfo.getLatitude());
                 oldInfo.setLongitude(newInfo.getLongitude());
-                oldInfo.setPrecision(newInfo.getPrecision());
+                oldInfo.setPrecisionInfo(newInfo.getPrecisionInfo());
                 oldInfo.setAddress(newInfo.getAddress());
                 oldInfo.setCountry(newInfo.getCountry());
                 oldInfo.setProvince(newInfo.getProvince());

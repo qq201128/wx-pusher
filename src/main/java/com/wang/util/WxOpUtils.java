@@ -5,17 +5,18 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.wang.common.WxConstants;
-import com.wang.dto.IdentityInfo;
-import com.wang.dto.ResponseMessage;
+import com.wang.domain.IdentityInfo;
+import com.wang.domain.ResponseMessage;
 import com.wang.exception.WxException;
 import com.wang.observer.WxSubscriber;
-import com.wang.repository.DistrictInfoRepository;
+import com.wang.mapper.DistrictInfoMapper;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
-import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -33,6 +34,8 @@ import java.util.Set;
 public class WxOpUtils {
     private WxOpUtils() {
     }
+    @Resource
+    private static DistrictInfoMapper districtInfoMapper;
 
     public static void returnMessages(HttpServletResponse response, String msgType, String openId, String officialAccount,
                                       String returnContent) throws IOException {
@@ -136,38 +139,6 @@ public class WxOpUtils {
         return properties.toArray(new String[0]);
     }
 
-    /**
-     * 地区代码
-     *
-     * @param identityInfo 身份信息
-     * @return {@link Integer}
-     */
-    public static Integer getDistrictCode(IdentityInfo identityInfo) {
-        if (identityInfo == null) {
-            throw new WxException("identityInfo 为空");
-        }
-        String district = identityInfo.getDistrict();
-        String city = identityInfo.getCity();
-        if (district == null || city == null) {
-            throw new WxException("district 或 city 为空，district=" + district + ", city=" + city);
-        }
-        try {
-            char suffix = district.charAt(district.length() - 1);
-            if (suffix == '区' || suffix == '县') {
-                district = district.substring(0, district.length() - 1);
-            }
-            if (city.charAt(city.length() - 1) == '市') {
-                city = city.substring(0, city.length() - 1);
-            }
-            Integer districtCode = SpringUtils.getBean(DistrictInfoRepository.class).getDistrictCode(city, district);
-            if (districtCode == null) {
-                throw new WxException("未找到地区编码，city=" + city + ", district=" + district);
-            }
-            return districtCode;
-        } catch (Exception e) {
-            throw new WxException("获取地区编码错误，city=" + city + ", district=" + district + "，请检查是否开启允许地理位置访问！");
-        }
-    }
 
     public static Long countDays(String beginDate, String endDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
