@@ -19,5 +19,8 @@ wx:
   # 接受特殊信息模板的openId
   # 需要注意在 -后面有一个空格，这里是填写special类型的订阅者的openId的地方，有几行就加几个-
   specialOpenIdList:
-    - oWrc7vsTuNyZM-mWcc7CyH0GALOA
-    - oWrc7vseFU1e67lyviuwE6HJWI68
+    - *********************
+siliconflow:
+  accessKeyID: ************
+  chatCompletionUrl: https://api.siliconflow.cn/v1/chat/completions
+  model: deepseek-ai/DeepSeek-V3
