@@ -5,7 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.wang.common.WxConstants;
 import com.wang.common.WxTemplateConstants;
-import com.wang.dto.IdentityInfo;
+import com.wang.domain.IdentityInfo;
 import com.wang.strategy.WxTemplateStrategy;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;

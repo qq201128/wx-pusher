@@ -3,17 +3,18 @@ package com.wang.controller;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wang.common.WxConstants;
-import com.wang.dto.IdentityInfo;
-import com.wang.dto.IdentityInfoKey;
+import com.wang.domain.IdentityInfo;
 import com.wang.observer.WxPublisher;
 import com.wang.observer.WxSubscriber;
-import com.wang.repository.IdentityInfoRepository;
+import com.wang.mapper.IdentityInfoMapper;
 import com.wang.util.WxOpUtils;
+import jakarta.annotation.Resource;
+import org.springframework.context.event.EventListener;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -25,12 +26,12 @@ public class InitController {
     private WxPublisher wxPublisher;
 
     @Resource
-    private IdentityInfoRepository identityInfoRepository;
+    private IdentityInfoMapper identityInfoMapper;
 
     /**
      * 初始化从远端拉取关注列表，比从数据库里拿更好
      */
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void init() {
         String accessToken = WxOpUtils.getAccessToken();
         // 获取关注者列表
@@ -50,11 +51,15 @@ public class InitController {
             identityInfo.setOpenId(openId);
             identityInfo.setPublicId(WxConstants.PUBLIC_ID);
             // 查询表中是否有对应主键的身份信息
-            IdentityInfoKey identityInfoKey = new IdentityInfoKey(WxConstants.APP_ID, WxConstants.APP_SECRET, openId);
-            IdentityInfo infoFromDataBase = identityInfoRepository.findById(identityInfoKey).orElse(null);
+
+
+            IdentityInfo infoFromDataBase = identityInfoMapper.selectOne(Wrappers.<IdentityInfo>query().lambda()
+                    .eq(IdentityInfo::getAppId, WxConstants.APP_ID)
+                    .eq(IdentityInfo::getAppSecret, WxConstants.APP_SECRET)
+                    .eq(IdentityInfo::getOpenId, openId));
             WxSubscriber wxSubscriber;
             if (infoFromDataBase == null) {
-                identityInfoRepository.save(identityInfo);
+                identityInfoMapper.insert(identityInfo);
                 wxSubscriber = new WxSubscriber(identityInfo);
             } else {
                 wxSubscriber = new WxSubscriber(infoFromDataBase);

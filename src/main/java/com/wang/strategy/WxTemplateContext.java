@@ -1,11 +1,11 @@
 package com.wang.strategy;
 
-import com.wang.dto.IdentityInfo;
+import com.wang.domain.IdentityInfo;
 import com.wang.enums.WxTemplateType;
+import jakarta.annotation.Resource;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Map;
 
 /**

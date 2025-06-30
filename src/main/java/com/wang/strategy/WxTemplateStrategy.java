@@ -1,6 +1,6 @@
 package com.wang.strategy;
 
-import com.wang.dto.IdentityInfo;
+import com.wang.domain.IdentityInfo;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 
 /**

@@ -43,6 +43,7 @@ public class ChatUtils {
                 "   - 不包含任何解释性文字\n" +
                 "   - 代码必须可直接运行\n" +
                 "   - 确保跨浏览器兼容性\n" +
+                "   - 不要代码块\n" +
                 "\n" +
                 "3. 设计原则：\n" +
                 "   - 视觉层次分明\n" +
@@ -59,74 +60,7 @@ public class ChatUtils {
                 "- 预期结果: 完整可运行的天气卡片HTML\n" +
                 "\n" +
                 "## Initialization\n" +
-                "作为HTML天气卡片生成专家，你必须遵守上述Rules，按照Workflows执行任务。\n" +
-                "\n" +
-                "```\n" +
-                "<div class=\"weather-card\">\n" +
-                "  <div class=\"weather-header\">\n" +
-                "    <h2>北京</h2>\n" +
-                "    <div class=\"weather-icon\">☀\uFE0F</div>\n" +
-                "  </div>\n" +
-                "  <div class=\"weather-content\">\n" +
-                "    <div class=\"temperature\">25°C</div>\n" +
-                "    <div class=\"condition\">晴</div>\n" +
-                "    <div class=\"details\">\n" +
-                "      <div class=\"detail-item\">湿度: 45%</div>\n" +
-                "      <div class=\"detail-item\">风速: 3级</div>\n" +
-                "      <div class=\"detail-item\">气压: 1012hPa</div>\n" +
-                "    </div>\n" +
-                "  </div>\n" +
-                "</div>\n" +
-                "\n" +
-                "<style>\n" +
-                ".weather-card {\n" +
-                "  font-family: Arial, sans-serif;\n" +
-                "  width: 300px;\n" +
-                "  border-radius: 10px;\n" +
-                "  box-shadow: 0 4px 8px rgba(0,0,0,0.1);\n" +
-                "  padding: 20px;\n" +
-                "  background: linear-gradient(135deg, #72b5f7, #e0f2fe);\n" +
-                "  color: #333;\n" +
-                "}\n" +
-                "\n" +
-                ".weather-header {\n" +
-                "  display: flex;\n" +
-                "  justify-content: space-between;\n" +
-                "  align-items: center;\n" +
-                "  margin-bottom: 15px;\n" +
-                "}\n" +
-                "\n" +
-                ".weather-header h2 {\n" +
-                "  margin: 0;\n" +
-                "  font-size: 24px;\n" +
-                "}\n" +
-                "\n" +
-                ".weather-icon {\n" +
-                "  font-size: 32px;\n" +
-                "}\n" +
-                "\n" +
-                ".temperature {\n" +
-                "  font-size: 48px;\n" +
-                "  font-weight: bold;\n" +
-                "  margin: 10px 0;\n" +
-                "}\n" +
-                "\n" +
-                ".condition {\n" +
-                "  font-size: 18px;\n" +
-                "  margin-bottom: 15px;\n" +
-                "}\n" +
-                "\n" +
-                ".details {\n" +
-                "  display: grid;\n" +
-                "  grid-template-columns: repeat(2, 1fr);\n" +
-                "  gap: 10px;\n" +
-                "}\n" +
-                "\n" +
-                ".detail-item {\n" +
-                "  font-size: 14px;\n" +
-                "}\n" +
-                "</style>\n" +
-                "```");
+                "作为HTML天气卡片生成专家，你必须遵守上述Rules，按照Workflows执行任务。\n" );
 
         return stringBuilder.toString();
     }
