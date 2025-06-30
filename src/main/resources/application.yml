@@ -1,0 +1,23 @@
+server:
+  port: 19090
+
+#mysql
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1/jerry?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+#微信相关配置信息
+wx:
+  # 接受特殊信息模板的openId
+  # 需要注意在 -后面有一个空格，这里是填写special类型的订阅者的openId的地方，有几行就加几个-
+  specialOpenIdList:
+    - oWrc7vsTuNyZM-mWcc7CyH0GALOA
+    - oWrc7vseFU1e67lyviuwE6HJWI68
