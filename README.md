@@ -55,8 +55,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 wx:
   specialOpenIdList:
-    - oWrc7vsTuNyZM-mWcc7CyH0GALOA
-    - oWrc7vseFU1e67lyviuwE6HJWI68
+    - 填写特殊人群的的openid值 可填写多个
 ```
 
 ## 主要API接口
