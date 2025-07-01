@@ -43,5 +43,5 @@ public final class WxConstants {
     /**
      * 恋爱日期
      */
-    public static final String LOVE_DATE = "2023-10-11";
+    public static final String LOVE_DATE = "2023-10-08";
 }

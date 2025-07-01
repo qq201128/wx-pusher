@@ -13,7 +13,7 @@ logging:
     org.springframework.jdbc: INFO
 wx:
   specialOpenIdList:
-    - oWrc7vseFU1e67lyviuwE6HJWI68
+    - oWrc7vn8C0n6YNs7jF8VRH4AthfE
 
 siliconflow:
   accessKeyID: 'sk-ikbkcokceleimnjbszkftvijplkwhsheztwytamieuvigjrt'

@@ -18,13 +18,6 @@ import org.springframework.stereotype.Service;
 public class SpecialNightStrategy implements WxTemplateStrategy {
     @Override
     public void execute(WxMpTemplateMessage wxMpTemplateMessage, IdentityInfo identityInfo) {
-        String sayUrl = "http://api.tianapi.com/lzmy/index?key=" + WxConstants.TX_AK;
-        String sayStr = HttpUtil.get(sayUrl);
-        String sayList = JSONObject.parseObject(sayStr).get("newslist").toString();
-        String saying = JSONArray.parseArray(sayList).getJSONObject(0).get("saying").toString();
-        String title = JSONArray.parseArray(sayList).getJSONObject(0).get("source").toString();
-        wxMpTemplateMessage.addData(new WxMpTemplateData("location", identityInfo.getAddress(), "#9370DB"));
-        wxMpTemplateMessage.addData(new WxMpTemplateData("saying", saying, "#6699FF"));
-        wxMpTemplateMessage.addData(new WxMpTemplateData("title", "《" + title + "》", "#CCFF99"));
+
     }
 }
