@@ -41,7 +41,7 @@ public final class WxConstants {
     public static final String TX_AK = "975d11426e33c05ce397e200e3e6a659";
 
     /**
-     * 相识日期
+     * 恋爱日期
      */
-    public static final String MEET_DATE = "2023-10-11";
+    public static final String LOVE_DATE = "2023-10-11";
 }

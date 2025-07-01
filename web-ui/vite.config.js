@@ -10,5 +10,6 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
+    allowedHosts: ['3e3e0af0.r36.cpolar.top'],
   },
 }); 

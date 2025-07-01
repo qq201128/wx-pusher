@@ -6,4 +6,4 @@
 明天：{{tomorrow_weather.DATA}}  {{tomorrow_high.DATA}}/{{tomorrow_low.DATA}}°C
 
 恋爱已经：{{love_days.DATA}}天 ❤
-
+打工语录：{{work.DATA}}

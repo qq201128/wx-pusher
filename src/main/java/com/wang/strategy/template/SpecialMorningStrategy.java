@@ -48,6 +48,15 @@ public class SpecialMorningStrategy implements WxTemplateStrategy {
         JSONObject today = JSONArray.parseArray(result.get("forecasts").toString()).getJSONObject(0);
         // 明日天气
         JSONObject tomorrow = JSONArray.parseArray(result.get("forecasts").toString()).getJSONObject(1);
+
+        //每日打工语录
+        String workUrl = "https://apis.tianapi.com/dgryl/index?key=" + WxConstants.TX_AK;
+        String workStr = HttpUtil.get(workUrl);
+        JSONObject workJson = JSONObject.parseObject(workStr);
+        JSONObject workObject = workJson.getJSONObject("result");
+        // 打工语录句子
+        String work = workObject != null ? workObject.getString("content") : "";
+
         /*// 每日英语
         String dailyEnglishUrl = "http://api.tianapi.com/everyday/index?key=" + WxConstants.TX_AK;
         String dailyEnglishStr = HttpUtil.get(dailyEnglishUrl);
@@ -68,39 +77,43 @@ public class SpecialMorningStrategy implements WxTemplateStrategy {
         if (chinese.length() > 20) {
             chinese2 = chinese.substring(20);
         }*/
-        wxMpTemplateMessage.addData(new WxMpTemplateData("location", identityInfo.getAddress(), "#9370DB"));
-        wxMpTemplateMessage.addData(new WxMpTemplateData("now_temp", now.get("temp").toString(), "#87CEFA"));
-        wxMpTemplateMessage.addData(new WxMpTemplateData("now_weather", now.get("text").toString(), "#87CEEB"));
-        wxMpTemplateMessage.addData(new WxMpTemplateData("now_wind_dir", now.get("wind_dir").toString(), "#708090"));
-        wxMpTemplateMessage.addData(new WxMpTemplateData("now_wind_class", now.get("wind_class").toString(), "#708090"));
-        wxMpTemplateMessage.addData(new WxMpTemplateData("now_rh", now.get("rh").toString(), "#778899"));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("location", identityInfo.getAddress()));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("now_temp", now.get("temp").toString()));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("now_weather", now.get("text").toString()));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("now_wind_dir", now.get("wind_dir").toString()));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("now_wind_class", now.get("wind_class").toString()));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("now_rh", now.get("rh").toString()));
         String todayWeatherDay = today.get("text_day").toString();
         String todayWeatherNight = today.get("text_night").toString();
         if (todayWeatherDay.equals(todayWeatherNight)) {
-            wxMpTemplateMessage.addData(new WxMpTemplateData("today_weather", todayWeatherDay, "#FFC1C1"));
+            wxMpTemplateMessage.addData(new WxMpTemplateData("today_weather", todayWeatherDay));
         } else {
-            wxMpTemplateMessage.addData(new WxMpTemplateData("today_weather", todayWeatherDay + "转" + todayWeatherNight, "#FFC1C1"));
+            wxMpTemplateMessage.addData(new WxMpTemplateData("today_weather", todayWeatherDay + "转" + todayWeatherNight));
         }
-        wxMpTemplateMessage.addData(new WxMpTemplateData("today_high", today.get("high").toString(), "#CD9B9B"));
-        wxMpTemplateMessage.addData(new WxMpTemplateData("today_low", today.get("low").toString(), "#CD9B9B"));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("today_high", today.get("high").toString()));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("today_low", today.get("low").toString()));
         String tomorrowWeatherDay = tomorrow.get("text_day").toString();
         String tomorrowWeatherNight = tomorrow.get("text_night").toString();
         if (tomorrowWeatherDay.equals(tomorrowWeatherNight)) {
-            wxMpTemplateMessage.addData(new WxMpTemplateData("tomorrow_weather", tomorrowWeatherDay, "#DDA0DD"));
+            wxMpTemplateMessage.addData(new WxMpTemplateData("tomorrow_weather", tomorrowWeatherDay));
         } else {
-            wxMpTemplateMessage.addData(new WxMpTemplateData("tomorrow_weather", tomorrowWeatherDay + "转" + tomorrowWeatherNight, "#DDA0DD"));
+            wxMpTemplateMessage.addData(new WxMpTemplateData("tomorrow_weather", tomorrowWeatherDay + "转" + tomorrowWeatherNight));
         }
-        wxMpTemplateMessage.addData(new WxMpTemplateData("tomorrow_high", tomorrow.get("high").toString(), "#EE82EE"));
-        wxMpTemplateMessage.addData(new WxMpTemplateData("tomorrow_low", tomorrow.get("low").toString(), "#EE82EE"));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("tomorrow_high", tomorrow.get("high").toString()));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("tomorrow_low", tomorrow.get("low").toString()));
         // 相识天数，可以修改为恋爱天数，或者其他纪念意义天数
-        Long meetDays = WxOpUtils.countDays(WxConstants.MEET_DATE, new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-        wxMpTemplateMessage.addData(new WxMpTemplateData("love_days", String.valueOf(meetDays), "#C000C0"));
-        String htmlContent = siliconFlowAIService.chatToMorning("测试");
-        System.out.println(htmlContent);
+        Long meetDays = WxOpUtils.countDays(WxConstants.LOVE_DATE, new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("love_days", String.valueOf(meetDays)));
+        wxMpTemplateMessage.addData(new WxMpTemplateData("work", work));
+
+        String htmlContent = siliconFlowAIService.chatToMorning(wxMpTemplateMessage.getData().toString() + "我们的恋爱时间为"+WxConstants.LOVE_DATE);
+//        System.out.println(htmlContent);
+        wxMpTemplateMessage.setUrl("http://3e3e0af0.r36.cpolar.top");
+
         InformationHistory informationHistory = new InformationHistory();
         informationHistory.setOpenId(identityInfo.getOpenId());
         informationHistory.setInformation(htmlContent);
-
+        informationHistory.setCreateDate(new Date());
         informationHistoryMapper.insert(informationHistory);
 
 //        wxMpTemplateMessage.addData(new WxMpTemplateData("daily_english_en1", english1, "#FFCCFF"));

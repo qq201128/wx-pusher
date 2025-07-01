@@ -31,6 +31,7 @@ public class WxSubscriber implements Subscriber {
     @Override
     public void update(WxTemplateType wxTemplateType) {
         try {
+            System.out.println("------------------准备发送模板--------------------");
             WxMpService wxMpService = new WxMpServiceImpl();
             // 配置基本信息
             WxMpDefaultConfigImpl wxMpDefaultConfig = new WxMpDefaultConfigImpl();
@@ -44,9 +45,7 @@ public class WxSubscriber implements Subscriber {
             wxMpTemplateMessage.setTemplateId(wxTemplateType.getTemplateId());
             // 接收人
             wxMpTemplateMessage.setToUser(identityInfo.getOpenId());
-            // 设置详情跳转url
-            String detailUrl = "https://www.baidu.com";
-            wxMpTemplateMessage.setUrl(detailUrl);
+
             // 使用Spring工具类获取Bean
             WxTemplateContext wxTemplateContext = SpringUtils.getBean(WxTemplateContext.class);
             // 调用不同的模板策略
