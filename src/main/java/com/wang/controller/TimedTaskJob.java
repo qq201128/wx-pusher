@@ -23,7 +23,7 @@ public class TimedTaskJob {
     /**
      * 给特殊的人发早安（SPECIAL_MORNING模板）
      */
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 9 * * ?")
     public void executeSpecialMorningTask() {
         wxPublisher.inform(WxTemplateType.SPECIAL_MORNING);
     }
@@ -31,20 +31,20 @@ public class TimedTaskJob {
     /**
      * 给除了特殊的人以外的人发早安，（COMMON_MORNING模板）
      */
-    @Scheduled(cron = "0 30 7 * * ?")
+    @Scheduled(cron = "0 0 9 * * ?")
     public void executeCommonMorningTask() {
         wxPublisher.inform(WxTemplateType.COMMON_MORNING);
     }
-
-    @Scheduled(cron = "0 30 16 * * ?")
-    public void executeSpecialAfternoonTask() {
-        wxPublisher.inform(WxTemplateType.SPECIAL_AFTERNOON);
-    }
-
-    @Scheduled(cron = "0 30 22 * * ?")
-    public void executeSpecialNightTask() {
-        wxPublisher.inform(WxTemplateType.SPECIAL_NIGHT);
-    }
+//
+//    @Scheduled(cron = "0 30 16 * * ?")
+//    public void executeSpecialAfternoonTask() {
+//        wxPublisher.inform(WxTemplateType.SPECIAL_AFTERNOON);
+//    }
+//
+//    @Scheduled(cron = "0 30 22 * * ?")
+//    public void executeSpecialNightTask() {
+//        wxPublisher.inform(WxTemplateType.SPECIAL_NIGHT);
+//    }
 
     /**
      * 一个小时获取一次accessToken

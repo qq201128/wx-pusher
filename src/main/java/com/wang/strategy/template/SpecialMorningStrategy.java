@@ -86,9 +86,9 @@ public class SpecialMorningStrategy implements WxTemplateStrategy {
         wxMpTemplateMessage.addData(new WxMpTemplateData("love_days", String.valueOf(meetDays)));
         wxMpTemplateMessage.addData(new WxMpTemplateData("work", work));
 
-        String htmlContent = siliconFlowAIService.chatToMorning(wxMpTemplateMessage.getData().toString() + "我们的恋爱时间为"+WxConstants.LOVE_DATE);
+        String htmlContent = siliconFlowAIService.chatToSpecialMorning(wxMpTemplateMessage.getData().toString() + "我们的恋爱时间为"+WxConstants.LOVE_DATE);
 
-        wxMpTemplateMessage.setUrl("http://3e3e0af0.r36.cpolar.top");
+        wxMpTemplateMessage.setUrl("http://3e3e0af0.r36.cpolar.top?openid="+identityInfo.getOpenId());
 
         InformationHistory informationHistory = new InformationHistory();
         informationHistory.setOpenId(identityInfo.getOpenId());

@@ -12,10 +12,11 @@ import org.springframework.stereotype.Service;
 public class HtmlServiceImpl implements HtmlService {
     private final InformationHistoryMapper informationHistoryMapper;
     @Override
-    public InformationHistory getHtml() {
-        //todo 因目前无法确定到底是那个用户 所以使用最新的记录
+    public InformationHistory getHtml(String openId) {
+        // 按 openId 查询该用户最新记录
         return informationHistoryMapper.selectOne(Wrappers.<InformationHistory>query().lambda()
-                .last("limit 1")
-                .orderByDesc(InformationHistory::getCreateDate));
+                .eq(InformationHistory::getOpenId, openId)
+                .orderByDesc(InformationHistory::getCreateDate)
+                .last("limit 1"));
     }
 }

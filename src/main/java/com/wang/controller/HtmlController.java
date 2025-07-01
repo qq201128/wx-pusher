@@ -7,7 +7,9 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -19,9 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class HtmlController {
    private final HtmlService htmlService;
 
-    @PostMapping("/getHtml")
-    public InformationHistory getHtml() {
-
-        return htmlService.getHtml();
+    @GetMapping("/getHtml")
+    public InformationHistory getHtml(@RequestParam("openId") String openId) {
+        return htmlService.getHtml(openId);
     }
 }

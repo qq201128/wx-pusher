@@ -26,7 +26,6 @@ public class TimedTaskController {
      */
     @PostMapping("/executeSpecialMorningTask")
     public void executeSpecialMorningTask() {
-        System.out.println("00000000000000000000000");
         wxPublisher.inform(WxTemplateType.SPECIAL_MORNING);
     }
 
