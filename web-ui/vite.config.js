@@ -12,5 +12,6 @@ export default defineConfig({
       },
     },
     allowedHosts: ['3751016qc9ar.vicp.fun'],
+    historyApiFallback: true,
   },
 }); 

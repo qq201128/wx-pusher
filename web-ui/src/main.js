@@ -8,6 +8,11 @@ function getOpenIdFromUrl() {
   return params.get('openid');
 }
 
+function getPageFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('page');
+}
+
 async function renderHtmlCard() {
   const openid = getOpenIdFromUrl();
   if (!openid) {
@@ -19,4 +24,14 @@ async function renderHtmlCard() {
   document.querySelector('#app').innerHTML = data.information;
 }
 
-renderHtmlCard();
+// 新增：支持 /uploadFile 路由
+if (window.location.pathname === '/uploadFile') {
+  import('./uploadFile.js');
+} else {
+  const page = getPageFromUrl();
+  if (page === 'uploadFile') {
+    import('./uploadFile.js');
+  } else {
+    renderHtmlCard();
+  }
+}

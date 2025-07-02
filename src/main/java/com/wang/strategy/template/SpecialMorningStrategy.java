@@ -9,10 +9,7 @@ import com.wang.common.WxConstants;
 import com.wang.common.WxTemplateConstants;
 import com.wang.domain.*;
 import com.wang.exception.WxException;
-import com.wang.mapper.DistrictInfoMapper;
-import com.wang.mapper.InformationHistoryMapper;
-import com.wang.mapper.SongMapper;
-import com.wang.mapper.TrSongMapper;
+import com.wang.mapper.*;
 import com.wang.strategy.WxTemplateStrategy;
 import com.wang.util.WxOpUtils;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +18,11 @@ import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +39,7 @@ public class SpecialMorningStrategy implements WxTemplateStrategy {
     private static final String SONG_URL = "https://api.bugpk.com/api/163_music?ids=";
     private final SongMapper songMapper;
     private final TrSongMapper trSongMapper;
+    private final SysOssMapper ossMapper;
     @Override
     public void execute(WxMpTemplateMessage wxMpTemplateMessage, IdentityInfo identityInfo) {
         Integer districtCode = getDistrictCode(identityInfo);
@@ -96,6 +96,13 @@ public class SpecialMorningStrategy implements WxTemplateStrategy {
         Song song = getSong(identityInfo.getOpenId());
         if (song!=null){
             stringBuilder.append("歌曲名称为：").append(song.getSongName()).append("歌手为：").append(song.getSinger()).append("歌曲链接为：").append(song.getSongUrl()).append("歌曲图片为：").append(song.getSongPicture());
+        }
+        List<String> photoList = getPhoto();
+        if (photoList!=null){
+            for (String photo : photoList){
+                stringBuilder.append("我的照片链接为：").append(photo);
+            }
+
         }
         stringBuilder.append("我们的恋爱时间为：").append(WxConstants.LOVE_DATE);
 
@@ -159,7 +166,7 @@ public class SpecialMorningStrategy implements WxTemplateStrategy {
         if (songs == null || songs.isEmpty()) {
             return null;
         }
-        int randomIndex = java.util.concurrent.ThreadLocalRandom.current().nextInt(songs.size());
+        int randomIndex = ThreadLocalRandom.current().nextInt(songs.size());
         Song song = songs.get(randomIndex);
 
         String respStr = HttpUtil.get(SONG_URL + song.getSongId() + "&level=hires&type=json");
@@ -171,6 +178,25 @@ public class SpecialMorningStrategy implements WxTemplateStrategy {
         song.setSongPicture(picture);
 
         return song;
+    }
+    private List<String> getPhoto() {
+        List<SysOss> sysOssList = ossMapper.selectList();
+        List<String> photoUrls = new ArrayList<>();
+        int total = sysOssList.size();
+        if (total == 0) {
+            return photoUrls;
+        }
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < total; i++) {
+            indices.add(i);
+        }
+        // 打乱索引顺序
+        java.util.Collections.shuffle(indices);
+        int count = Math.min(4, total);
+        for (int i = 0; i < count; i++) {
+            photoUrls.add(sysOssList.get(indices.get(i)).getUrl());
+        }
+        return photoUrls;
     }
 
 }
