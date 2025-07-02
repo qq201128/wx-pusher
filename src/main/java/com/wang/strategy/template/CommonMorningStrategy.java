@@ -4,6 +4,7 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.google.errorprone.annotations.Var;
 import com.wang.chat.service.impl.SiliconFlowAIServiceImpl;
 import com.wang.common.WxConstants;
 import com.wang.common.WxTemplateConstants;
@@ -11,6 +12,8 @@ import com.wang.domain.*;
 import com.wang.exception.WxException;
 import com.wang.mapper.DistrictInfoMapper;
 import com.wang.mapper.InformationHistoryMapper;
+import com.wang.mapper.SongMapper;
+import com.wang.mapper.TrSongMapper;
 import com.wang.strategy.WxTemplateStrategy;
 import com.wang.util.WxOpUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 普通早安消息推送策略
@@ -34,18 +39,27 @@ public class CommonMorningStrategy implements WxTemplateStrategy {
     private static final String WORK_URL = "https://apis.tianapi.com/dgryl/index?key=";
     private static final String HOLIDAY_URL = "https://apis.tianapi.com/jiejiari/index?key=";
     private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final String SONG_URL = "https://api.bugpk.com/api/163_music?ids=";
+    //随机热歌
+    private static final String HOT_SONG_URL = "https://api.zxki.cn/api/wyyrg";
 
     private final DistrictInfoMapper districtInfoMapper;
     private final SiliconFlowAIServiceImpl siliconFlowAIService;
     private final InformationHistoryMapper informationHistoryMapper;
+    private final SongMapper songMapper;
+    private final TrSongMapper trSongMapper;
 
     @Override
     public void execute(WxMpTemplateMessage wxMpTemplateMessage, IdentityInfo identityInfo) {
+        StringBuilder stringBuilder = new StringBuilder();
         String today = new SimpleDateFormat(DATE_FORMAT).format(new Date());
         String work = getWorkQuote();
         HolidayInfo holidayInfo = getHolidayInfo(today);
         NextHolidayInfo nextHolidayInfo = getNextHolidayInfo(today);
-
+        Song song = getSong(identityInfo.getOpenId());
+        if (song!=null){
+            stringBuilder.append("我要听的歌曲名称为：").append(song.getSongName()).append("歌手为：").append(song.getSinger()).append("歌曲链接为：").append(song.getSongUrl()).append("歌曲图片为：").append(song.getSongPicture());
+        }
         Long meetDays = WxOpUtils.countDays(WxConstants.LOVE_DATE, today);
         wxMpTemplateMessage.addData(new WxMpTemplateData("love_days", String.valueOf(meetDays)));
         wxMpTemplateMessage.addData(new WxMpTemplateData("work", work));
@@ -55,9 +69,10 @@ public class CommonMorningStrategy implements WxTemplateStrategy {
         wxMpTemplateMessage.addData(new WxMpTemplateData("next_holiday_date", nextHolidayInfo.getNextHolidayDate()));
         wxMpTemplateMessage.addData(new WxMpTemplateData("holiday_tip", nextHolidayInfo.getNextHolidayTip()));
         wxMpTemplateMessage.addData(new WxMpTemplateData("holiday_rest", nextHolidayInfo.getNextHolidayRest()));
+        stringBuilder.append("我们的恋爱时间为：").append(WxConstants.LOVE_DATE);
+        String htmlContent = siliconFlowAIService.chatToCommonMorning(wxMpTemplateMessage.getData().toString() + stringBuilder.toString());
 
-        String htmlContent = siliconFlowAIService.chatToCommonMorning(wxMpTemplateMessage.getData().toString() + "我们的恋爱时间为" + WxConstants.LOVE_DATE);
-        wxMpTemplateMessage.setUrl("http://3e3e0af0.r36.cpolar.top?openid=" + identityInfo.getOpenId());
+        wxMpTemplateMessage.setUrl("https://3751016qc9ar.vicp.fun?openid=" + identityInfo.getOpenId());
         InformationHistory informationHistory = new InformationHistory();
         informationHistory.setOpenId(identityInfo.getOpenId());
         informationHistory.setInformation(htmlContent);
@@ -149,5 +164,29 @@ public class CommonMorningStrategy implements WxTemplateStrategy {
             log.error("获取下一个节假日信息失败", e);
         }
         return new NextHolidayInfo("", "", "", "", "");
+    }
+
+    private Song getSong(String openId){
+        String respStr = HttpUtil.get(HOT_SONG_URL);
+        JSONObject respJson = JSONObject.parseObject(respStr);
+        JSONObject data = respJson.getJSONObject("data");
+        if (data == null) {
+            return null;
+        }
+        String name = data.getString("name");
+        String url = data.getString("url");
+        String picUrl = data.getString("picurl");
+        String artistsName = data.getString("artistsname");
+        String id = data.getString("id");
+
+        Song song = new Song();
+        song.setSongName(name);
+        song.setSongUrl(url);
+        song.setSongId(Long.valueOf(id));
+        song.setSongPicture(picUrl);
+        song.setSinger(artistsName);
+        songMapper.insert(song);
+
+        return song;
     }
 }

@@ -34,9 +34,9 @@ public class SiliconFlowAiService {
 
     private final SiliconFlowAiConfig Config;
     private final OkHttpClient httpClient = new OkHttpClient.Builder()
-            .connectTimeout(90, TimeUnit.SECONDS)
-            .readTimeout(90, TimeUnit.SECONDS)
-            .writeTimeout(90, TimeUnit.SECONDS)
+            .connectTimeout(300, TimeUnit.SECONDS)
+            .readTimeout(300, TimeUnit.SECONDS)
+            .writeTimeout(300, TimeUnit.SECONDS)
             .build();
 
     /**

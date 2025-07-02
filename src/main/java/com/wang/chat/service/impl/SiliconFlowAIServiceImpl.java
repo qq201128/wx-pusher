@@ -31,6 +31,7 @@ public class SiliconFlowAIServiceImpl extends AbstractChatService implements Ini
         List<SiliconFlowChatMessage> siliconFlowChatMessageList = new ArrayList<>();
         SiliconFlowChatMessage siliconFlowChatMessage  = new SiliconFlowChatMessage();
         siliconFlowChatMessage.setRole("user");
+        System.out.println(content);
         siliconFlowChatMessage.setContent(ChatUtils.chatToSpecialMorning(content));
         siliconFlowChatMessageList.add(siliconFlowChatMessage);
         siliconFlowParam.setMessages(siliconFlowChatMessageList);
@@ -59,6 +60,7 @@ public class SiliconFlowAIServiceImpl extends AbstractChatService implements Ini
         List<SiliconFlowChatMessage> siliconFlowChatMessageList = new ArrayList<>();
         SiliconFlowChatMessage siliconFlowChatMessage  = new SiliconFlowChatMessage();
         siliconFlowChatMessage.setRole("user");
+        System.out.println(content);
         siliconFlowChatMessage.setContent(ChatUtils.chatToCommonMorning(content));
         siliconFlowChatMessageList.add(siliconFlowChatMessage);
         siliconFlowParam.setMessages(siliconFlowChatMessageList);

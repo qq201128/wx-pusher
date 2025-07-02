@@ -7,12 +7,12 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.wang.chat.service.impl.SiliconFlowAIServiceImpl;
 import com.wang.common.WxConstants;
 import com.wang.common.WxTemplateConstants;
-import com.wang.domain.DistrictInfo;
-import com.wang.domain.IdentityInfo;
-import com.wang.domain.InformationHistory;
+import com.wang.domain.*;
 import com.wang.exception.WxException;
 import com.wang.mapper.DistrictInfoMapper;
 import com.wang.mapper.InformationHistoryMapper;
+import com.wang.mapper.SongMapper;
+import com.wang.mapper.TrSongMapper;
 import com.wang.strategy.WxTemplateStrategy;
 import com.wang.util.WxOpUtils;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,9 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *  特殊早安推送策略
@@ -34,6 +37,9 @@ public class SpecialMorningStrategy implements WxTemplateStrategy {
 
     private final DistrictInfoMapper districtInfoMapper;
     private final InformationHistoryMapper informationHistoryMapper;
+    private static final String SONG_URL = "https://api.bugpk.com/api/163_music?ids=";
+    private final SongMapper songMapper;
+    private final TrSongMapper trSongMapper;
     @Override
     public void execute(WxMpTemplateMessage wxMpTemplateMessage, IdentityInfo identityInfo) {
         Integer districtCode = getDistrictCode(identityInfo);
@@ -86,9 +92,16 @@ public class SpecialMorningStrategy implements WxTemplateStrategy {
         wxMpTemplateMessage.addData(new WxMpTemplateData("love_days", String.valueOf(meetDays)));
         wxMpTemplateMessage.addData(new WxMpTemplateData("work", work));
 
-        String htmlContent = siliconFlowAIService.chatToSpecialMorning(wxMpTemplateMessage.getData().toString() + "我们的恋爱时间为"+WxConstants.LOVE_DATE);
+        StringBuilder stringBuilder = new StringBuilder();
+        Song song = getSong(identityInfo.getOpenId());
+        if (song!=null){
+            stringBuilder.append("歌曲名称为：").append(song.getSongName()).append("歌手为：").append(song.getSinger()).append("歌曲链接为：").append(song.getSongUrl()).append("歌曲图片为：").append(song.getSongPicture());
+        }
+        stringBuilder.append("我们的恋爱时间为：").append(WxConstants.LOVE_DATE);
 
-        wxMpTemplateMessage.setUrl("http://3e3e0af0.r36.cpolar.top?openid="+identityInfo.getOpenId());
+        String htmlContent = siliconFlowAIService.chatToSpecialMorning(wxMpTemplateMessage.getData().toString() + stringBuilder.toString());
+
+        wxMpTemplateMessage.setUrl("https://3751016qc9ar.vicp.fun?openid="+identityInfo.getOpenId());
 
         InformationHistory informationHistory = new InformationHistory();
         informationHistory.setOpenId(identityInfo.getOpenId());
@@ -128,6 +141,36 @@ public class SpecialMorningStrategy implements WxTemplateStrategy {
         } catch (Exception e) {
             throw new WxException("获取地区编码错误，city=" + city + ", district=" + district + "，请检查是否开启允许地理位置访问！");
         }
+    }
+
+    private Song getSong(String openId){
+        List<Song> songs;
+        //查询是否有专属的歌单
+        List<TrSong> trSongs = trSongMapper.selectList(Wrappers.<TrSong>query().lambda()
+                .eq(TrSong::getOpenId, openId));
+        if (trSongs !=null && !trSongs.isEmpty()){
+            Set<Long> songIds = trSongs.stream().collect(Collectors.groupingBy(TrSong::getSongId)).keySet();
+            songs = songMapper.selectList(Wrappers.<Song>query().lambda()
+                    .in(Song::getId,songIds));
+        }else {
+            songs = songMapper.selectList();
+        }
+
+        if (songs == null || songs.isEmpty()) {
+            return null;
+        }
+        int randomIndex = java.util.concurrent.ThreadLocalRandom.current().nextInt(songs.size());
+        Song song = songs.get(randomIndex);
+
+        String respStr = HttpUtil.get(SONG_URL + song.getSongId() + "&level=hires&type=json");
+        JSONObject respJson = JSONObject.parseObject(respStr);
+        // 直接提取url字段
+        String url = respJson.getString("url");
+        String picture = respJson.getString("pic");
+        song.setSongUrl(url);
+        song.setSongPicture(picture);
+
+        return song;
     }
 
 }

@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   server: {
+    host: '0.0.0.0',
     port: 9091,
     proxy: {
       '/api': {
@@ -10,6 +11,6 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
-    allowedHosts: ['3e3e0af0.r36.cpolar.top'],
+    allowedHosts: ['3751016qc9ar.vicp.fun'],
   },
 }); 
