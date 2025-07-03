@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -48,5 +50,14 @@ public class OssServiceImpl implements OssService {
 
         //返回上传路径
         return url;
+    }
+
+    @Override
+    public List<String> uploadFiles(MultipartFile[] multipartFiles) throws IOException {
+        List<String> urls = new ArrayList<>();
+        for (MultipartFile file : multipartFiles) {
+            urls.add(uploadFile(file));
+        }
+        return urls;
     }
 }
