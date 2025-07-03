@@ -11,6 +11,23 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 100MB
+
+  ai:
+    dashscope:
+      api-key: "sk-4523cc0be17a4b0c86ecf4eddee62c99"
+      chat:
+        options:
+          model: qwen-max
+
+    mcp:
+      client:
+        enabled: true
+        name: mcp-client
+        version: 1.0.0
+        type: SYNC
+        request-timeout: 60000
+        stdio:
+          servers-configuration: classpath:/mcp-servers.json
 logging:
   level:
     com.zaxxer.hikari: INFO
